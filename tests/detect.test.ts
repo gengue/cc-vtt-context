@@ -80,3 +80,12 @@ test('pickName reads flat and wrapped vcli records', () => {
   expect(pickName({ trip: { id: 2, version_name: 'v2' } })).toBe('v2')
   expect(pickName({ id: 3 })).toBe(undefined)
 })
+
+test('Looker Studio reports, either domain, one row per report', () => {
+  const text = 'https://datastudio.google.com/u/0/reporting/abcdef12-3456-7890-abcd-ef1234567890 ' +
+    'https://lookerstudio.google.com/reporting/00000000-1111-2222-3333-444444444444/page/p_abc'
+  expect(detect(text).map(i => [i.kind, i.ref, i.title])).toEqual([
+    ['report', 'abcdef12-3456-7890-abcd-ef1234567890', 'Report abcdef12'],
+    ['report', '00000000-1111-2222-3333-444444444444', 'Report 00000000'],
+  ])
+})

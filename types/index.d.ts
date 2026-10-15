@@ -1,10 +1,10 @@
-export type ContextKind = 'clickup' | 'chat' | 'go' | 'mr'
+export type ContextKind = 'clickup' | 'chat' | 'go' | 'mr' | 'report'
 
 export type ClickUpStatus = { name: string; color: string }
 
 export type ContextItem = {
   kind: ContextKind
-  /** Dedup key within its kind: task id, space/thread, env:GO path, or project!iid. */
+  /** Dedup key within its kind: task id, space/thread, env:GO path, project!iid, or report id. */
   ref: string
   url: string
   /** Resolved name; absent until looked up (or when the lookup failed). */

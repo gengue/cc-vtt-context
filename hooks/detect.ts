@@ -11,6 +11,8 @@ export const CUSTOM_ID_RE = /^[A-Za-z]+-\d+$/
 const CHAT_HOST_RE = /^https?:\/\/(?:chat\.google\.com\/|mail\.google\.com\/(?:chat\/|mail\/.*#chat\/))/
 const CHAT_IDS_RE = /\/(room|space|chat|dm)\/([A-Za-z0-9_-]{6,})(?:\/([A-Za-z0-9_-]+))?/
 const GO_RE = /^https?:\/\/go(-stg)?\.venturatravel\.org(\/[^?#]*)?/
+// datastudio.google.com or lookerstudio.google.com /u/0/reporting/<uuid>[/page/<page>]
+const REPORT_RE = /^https?:\/\/(?:datastudio|lookerstudio)\.google\.com\/(?:u\/\d+\/)?reporting\/([0-9a-f-]{36})/i
 const MR_RE = /^https?:\/\/gitlab\.venturatravel\.org\/(.+?)\/-\/merge_requests\/(\d+)/
 
 export function detect(text: string): ContextItem[] {
@@ -43,6 +45,14 @@ export function detect(text: string): ContextItem[] {
     if (mr) {
       const [, project = '', iid = ''] = mr
       found.push({ kind: 'mr', ref: `${project}!${iid}`, url: `https://gitlab.venturatravel.org/${project}/-/merge_requests/${iid}` })
+      continue
+    }
+
+    const report = url.match(REPORT_RE)
+    if (report) {
+      const [, id = ''] = report
+      // ponytail: no API reads a report's name with the user's logins, so the id names it
+      found.push({ kind: 'report', ref: id.toLowerCase(), url, title: `Report ${id.slice(0, 8)}` })
       continue
     }
 

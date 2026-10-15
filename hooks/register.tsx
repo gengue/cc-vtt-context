@@ -13,7 +13,7 @@ const SCANNED_DOORS: readonly string[] = ['prompt', 'response', 'delivery', 'att
 const items = atom({ plugin: 'vtt-context', key: 'entries' } as const, [])
 // The ticket whose status picker is open; '' when none.
 const editing = atom({ plugin: 'vtt-context', key: 'editingStatus' } as const, '')
-const SECTION_ORDER: readonly ContextKind[] = ['clickup', 'mr', 'chat', 'go']
+const SECTION_ORDER: readonly ContextKind[] = ['clickup', 'mr', 'chat', 'report', 'go']
 
 const ICONS: Record<ContextKind, string> = {
   clickup:
@@ -21,10 +21,18 @@ const ICONS: Record<ContextKind, string> = {
   chat:
     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 3h16a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H9l-5 4v-4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z" fill="#00AC47"/><rect x="6.5" y="7.5" width="11" height="2" rx="1" fill="#fff"/><rect x="6.5" y="11.5" width="7" height="2" rx="1" fill="#fff"/></svg>',
   go: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><rect width="24" height="24" rx="5" fill="#1F2937"/><text x="12" y="16.3" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="700" font-size="10.5" fill="#fff">GO</text></svg>',
+  report:
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><rect width="24" height="24" rx="5" fill="#4285F4"/><rect x="5.5" y="12" width="3" height="6.5" rx="1" fill="#fff"/><rect x="10.5" y="8" width="3" height="10.5" rx="1" fill="#fff"/><rect x="15.5" y="5" width="3" height="13.5" rx="1" fill="#fff"/></svg>',
   mr: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 25 24"><path d="m24.507 9.5-.034-.09L21.082.562a.896.896 0 0 0-1.694.091l-2.29 7.01H7.825L5.535.653a.898.898 0 0 0-1.694-.09L.451 9.411.416 9.5a6.297 6.297 0 0 0 2.09 7.278l.012.01.03.022 5.16 3.867 2.56 1.935 1.554 1.176a1.051 1.051 0 0 0 1.268 0l1.555-1.176 2.56-1.935 5.197-3.89.014-.01A6.297 6.297 0 0 0 24.507 9.5Z" fill="#E24329"/></svg>',
 }
-const GLYPH_COLOR: Record<ContextKind, string> = { clickup: '#7B68EE', chat: '#00AC47', go: '#9CA3AF', mr: '#E24329' }
-const KIND_NAME: Record<ContextKind, string> = { clickup: 'ClickUp', chat: 'Google Chat', go: 'GO', mr: 'GitLab MR' }
+const GLYPH_COLOR: Record<ContextKind, string> = { clickup: '#7B68EE', chat: '#00AC47', go: '#9CA3AF', mr: '#E24329', report: '#4285F4' }
+const KIND_NAME: Record<ContextKind, string> = {
+  clickup: 'ClickUp',
+  chat: 'Google Chat',
+  go: 'GO',
+  mr: 'GitLab MR',
+  report: 'Looker Studio',
+}
 
 // The desktop app's PATH may lack Homebrew or /usr/local, so retry there.
 async function run($: EngineInterface, cmd: string, args: string[], cwd?: string): Promise<string | undefined> {
@@ -96,6 +104,7 @@ async function lookup($: EngineInterface, item: ContextItem): Promise<Partial<Co
     }
   }
 
+  if (item.kind !== 'go') return
   // GO: the URL already named the record; vcli adds its name when logged in.
   const [env = 'prd', path = '/'] = item.ref.split(/:(.*)/s)
   const record = goRecord(path)
@@ -239,7 +248,7 @@ export const register: Register = on => {
   on('session.start', async ($, e, next) => {
     await $.command.register({
       name: 'vtt-context',
-      description: 'Show the VTT context pane (ClickUp, Google Chat, GitLab, GO links of this session)',
+      description: 'Show the VTT context pane (ClickUp, GitLab, Google Chat, Looker Studio, GO links of this session)',
     })
     // A resumed session's rows are loaded, not appended: scan them once.
     const found = (await $.session.messages()).flatMap(m => detect(m.text))
@@ -272,7 +281,7 @@ export const register: Register = on => {
   on('ui.render', { component: 'Pane', requestId: PANE }, async ($, e) => {
     const list = await read($, items)
     const open = await read($, editing)
-    const empty = 'No ClickUp, Chat, GitLab or GO links yet.'
+    const empty = 'No ClickUp, GitLab, Chat, Looker Studio or GO links yet.'
 
     if (e.surface === 'terminal') {
       const t = $.ui.resolve(e)
