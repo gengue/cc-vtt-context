@@ -1,4 +1,4 @@
-# vtt-context
+# cc-vtt-context
 
 A Claude Code mod for Ventura Travel. It adds a **VTT context** side pane that lists the work links of the session, grouped by app:
 
@@ -15,7 +15,7 @@ The pane opens when a link shows up in the chat. `/vtt-context` opens it again, 
 In a Claude Code terminal session:
 
 ```
-/plugin install vtt-context --marketplace gengue/vtt-context
+/plugin install vtt-context --marketplace gengue/cc-vtt-context
 ```
 
 Answer `y` to add the marketplace, then pick the user scope. The desktop app's Code tab loads it too.

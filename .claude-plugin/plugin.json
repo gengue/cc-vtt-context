@@ -3,8 +3,8 @@
   "version": "0.3.0",
   "author": { "name": "Genesis Guerrero" },
   "description": "VTT context pane: ClickUp tasks, GitLab MRs, Google Chat threads, Looker Studio reports and GO links of the session",
-  "homepage": "https://github.com/gengue/vtt-context",
-  "repository": "https://github.com/gengue/vtt-context",
+  "homepage": "https://github.com/gengue/cc-vtt-context",
+  "repository": "https://github.com/gengue/cc-vtt-context",
   "license": "MIT",
   "types": "./types/index.d.ts"
 }
