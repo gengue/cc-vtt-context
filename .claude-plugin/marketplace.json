@@ -1,0 +1,13 @@
+{
+  "name": "vtt-context",
+  "description": "Ventura Travel work context pane for Claude Code",
+  "owner": {
+    "name": "Genesis Guerrero"
+  },
+  "plugins": [
+    {
+      "name": "vtt-context",
+      "source": "./"
+    }
+  ]
+}
