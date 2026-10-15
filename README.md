@@ -2,6 +2,8 @@
 
 A Claude Code mod for Ventura Travel. It adds a **VTT context** side pane that lists the work links of the session, grouped by app:
 
+<img src="docs/screenshot.png" alt="VTT context pane with ClickUp, Looker Studio and GO sections" width="388">
+
 - **ClickUp**: task name, assignee and a colored status pill. Click the pill to change the status. The ticket of the current git branch (`fix/TK-12345-...`) is added by itself.
 - **GitLab MR**: title, state, pipeline and target branch. MRs to `main` get a **Send to IT MR's** button: Claude drafts the message and waits for your OK.
 - **Google Chat**: space name, for spaces and threads.
